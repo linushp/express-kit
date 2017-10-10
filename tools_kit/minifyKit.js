@@ -4,6 +4,8 @@ var UglifyJS = require('uglify-js');
 var html2js = require('./html2js');
 
 
+var config = require('../functions/config');
+
 
 function minifyCssCode(baseDir,cssArray){
     var cssContentArray = [];
@@ -35,11 +37,22 @@ function minifyJavaScript(baseDir,jsArray){
     return jsContentArray.join("\n");
 }
 
-function getMainHtmlContent(baseDir,config_main,jsName,cssName){
 
-    var script = '<script type="text/javascript" src="'+jsName+'"></script>';
 
-    var style = ' <link rel="stylesheet" href="'+cssName+'" />';
+function toStaticPath(jsName,outDir){
+    var jsPath = path.join(outDir,jsName);
+    var configObj = config.getConfig();
+    var serverRoot = configObj.serverROOT;
+    return jsPath.replace(serverRoot,'');
+}
+
+
+function getMainHtmlContent(baseDir,config_main,jsName,cssName,config_out){
+
+    var outDir = path.join(baseDir,config_out);
+
+    var style = ' <link rel="stylesheet" href="'+toStaticPath(cssName,outDir)+'" />';
+    var script = '<script type="text/javascript" src="'+toStaticPath(jsName,outDir)+'"></script>';
 
     var htmlPath = path.join(baseDir,config_main);
     var htmlContent = fs.readFileSync(htmlPath, 'utf-8');
@@ -75,7 +88,7 @@ function deleteFolder(dir_path) {
     }
 }
 
-function minifyALL(jsonPath){
+function minifyByJSON(jsonPath){
 
     var jsonStr = fs.readFileSync(jsonPath, 'utf-8');
     var jsonConfig = JSON.parse(jsonStr);
@@ -94,15 +107,15 @@ function minifyALL(jsonPath){
 
     var buildTime = new Date().getTime();
 
+    var configObj = config.getConfig();
+
     //2.编译HTML文件
-    var htmlString = html2js.getHtml2JsContent(baseDir,config_html,"html_tpl");
+    var htmlString = html2js.getHtml2JsContent(baseDir,config_html,configObj.html2js_tpl_name);
     //3.编译JS文件
     var jsCode = minifyJavaScript(baseDir,config_js);
     jsCode = htmlString + "\n" + jsCode;
     var jsName = config_name + "." + buildTime + ".min.js";
     outFile(jsCode, jsName, baseDir, config_out);
-
-
 
 
     //4.编译CSS文件
@@ -112,11 +125,14 @@ function minifyALL(jsonPath){
 
 
     //5. 输出HTML主页面
-    var mainHtml = getMainHtmlContent(baseDir,config_main,jsName,cssName);
+    var mainHtml = getMainHtmlContent(baseDir,config_main,jsName,cssName,config_out);
     var mainHtmlName = config_name + ".html";
     outFile(mainHtml,mainHtmlName,baseDir,config_out);
 }
 
 
+module.exports = {
+    minifyByJSON:minifyByJSON
+};
 
-minifyALL(path.join(__dirname, '../static/client-src/admin/index.json'));
+//minifyALL(path.join(__dirname, '../static/client-src/admin/index.json'));

@@ -1,5 +1,3 @@
-var fs = require("fs");
-var path = require("path");
 
 
 function propStringToMap(ss1) {
@@ -90,40 +88,9 @@ function extendObject(a, b) {
     return a;
 }
 
-function htmlArray2js(dirPath, htmlPathArray) {
-
-    var result = {};
-
-    for (var i = 0; i < htmlPathArray.length; i++) {
-
-        var htmlPath = htmlPathArray[i];
-
-        var filePath = path.resolve(dirPath, htmlPath);
-
-        if (filePath.indexOf(dirPath) !== 0) {
-            var errorMsg = {};
-            errorMsg["read_file_error_" + htmlPath] = "illegal access";
-            result = extendObject(result, errorMsg);
-        } else {
-            var html = fs.readFileSync(filePath, "utf-8");
-            var htmlObject = parseString2Html(html);
-            result = extendObject(result, htmlObject);
-        }
-    }
-
-    return result;
-}
-
-
-function getHtml2JsContent(dirPath, htmlPathArray,varName) {
-    var js = htmlArray2js(dirPath, htmlPathArray);
-    var jsStr = JSON.stringify(js);
-
-    return "var "+ varName +" = " + jsStr + ";";
-}
-
 
 
 module.exports = {
-    getHtml2JsContent:getHtml2JsContent
+    extendObject:extendObject,
+    parseString2Html:parseString2Html
 };
