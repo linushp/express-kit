@@ -10,10 +10,13 @@
     "type": "git",
     "url": "git+https://github.com/luanhaipeng/express-kit.git"
   },
-  "author": "luanhaipeng",
+  "author": "910010653@qq.com",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/luanhaipeng/express-kit/issues"
   },
-  "homepage": "https://github.com/luanhaipeng/express-kit#readme"
+  "homepage": "https://github.com/luanhaipeng/express-kit#readme",
+  "dependencies": {
+    "uglify-js": "^3.1.3"
+  }
 }
