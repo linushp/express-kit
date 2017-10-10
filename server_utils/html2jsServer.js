@@ -1,5 +1,4 @@
 var DevUtils = require('./DevUtils');
-var LogUtils = require('./LogUtils');
 var config = require('../functions/config');
 var path = require('path');
 var fs = require('fs');
