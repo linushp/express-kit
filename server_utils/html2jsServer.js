@@ -29,7 +29,7 @@ function toScriptArray(jsArray0, baseDir, serverROOT, type, staticROOT) {
 }
 
 
-function renderPageInclude(req, res, data, jsonPath) {
+function renderPageInclude(req, res, data, jsonPath ,callback) {
 
     var configObj = config.getConfig();
     var html2js_tpl_name = configObj.html2js_tpl_name;
@@ -57,7 +57,9 @@ function renderPageInclude(req, res, data, jsonPath) {
         if (DevUtils.isProduction(req)) {
             var mainHtmlName = config_name + ".html";
             var outMainHTML = path.join(baseDir,config_out,mainHtmlName);
-            res.render(outMainHTML,data);
+            res.render(outMainHTML, data, function (a, b, c) {
+                callback && callback(a, b, c);
+            });
         } else {
 
             var configObj = config.getConfig();
@@ -78,7 +80,9 @@ function renderPageInclude(req, res, data, jsonPath) {
             data['_includeScript_'] = includeScript;
 
             var sourceMainHTML = path.join(baseDir, config_main);
-            res.render(sourceMainHTML, data);
+            res.render(sourceMainHTML, data ,function(a,b,c){
+                callback && callback(a,b,c);
+            });
         }
 
     });
