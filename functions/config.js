@@ -10,7 +10,7 @@ function extendObject(a, b) {
 }
 
 
-var serverROOT =  path.join(__dirname, "../..");
+var serverROOT =  path.join(__dirname, "../../..");
 var staticROOT =  path.join(serverROOT,"./static");
 
 var config = {
