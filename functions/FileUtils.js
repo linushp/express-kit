@@ -56,7 +56,7 @@ function createJsonConfig_getWeight(fileOrder,a){
 
 function createJsonConfig(dir_path){
     var fileList = getFolderFiles(dir_path,[]);
-    var fileOrder = ['common','func','util','apis','store','action','comp','view','page'];
+    var fileOrder = ['common','func','util','apis','store','action','comp','view','page','src'];
     var lastOrder = ['main','index'];
     var fileListRemoveBase = fileList.map(function(filePath){
         return filePath.replace(dir_path +  path.sep ,'');
