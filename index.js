@@ -49,7 +49,7 @@ module.exports = {
     },
 
 
-    render: function (req, res, data, dir_path, callback) {
+    render: function (req, res, dir_path, data, callback) {
         if (DevUtils.isProduction(req)) {
             var outMainHTML = path.join(dir_path,'./_dist/index.html');
             res.render(outMainHTML, data, callback);
