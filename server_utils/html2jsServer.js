@@ -29,67 +29,69 @@ function toScriptArray(jsArray0, baseDir, serverROOT, type, staticROOT) {
 }
 
 
-function renderPageInclude(req, res, data, jsonPath ,callback) {
+
+
+function renderPageIncludeByConfig(req, res, data, jsonConfig ,baseDir,callback){
 
     var configObj = config.getConfig();
     var html2js_tpl_name = configObj.html2js_tpl_name;
 
-    data = data || {};
-    fs.readFile(jsonPath, 'utf-8', function (err, jsonStr) {
+    var config_js = jsonConfig['js'] || [];
+    var config_css = jsonConfig['css'] || [];
+    var config_html = jsonConfig['html'] || [];
 
-        if(err){
-            res.send(err);
-            return;
-        }
-
-        var jsonConfig = JSON.parse(jsonStr);
-
-        var config_js = jsonConfig['js'] || [];
-        var config_css = jsonConfig['css'] || [];
-        var config_html = jsonConfig['html'] || [];
-
-        var config_name = jsonConfig['name'] || 'index';
-        var config_out = jsonConfig['out'] || './_dist';
-        var config_main = jsonConfig['main'] || './index.html';
-        var baseDir = path.dirname(jsonPath);
+    var config_name = jsonConfig['name'] || 'index';
+    var config_out = jsonConfig['out'] || './_dist';
+    var config_main = jsonConfig['main'] || './index.html';
 
 
-        if (DevUtils.isProduction(req)) {
-            var mainHtmlName = config_name + ".html";
-            var outMainHTML = path.join(baseDir,config_out,mainHtmlName);
-            res.render(outMainHTML, data, function (a, b, c) {
-                callback && callback(a, b, c);
-            });
-        } else {
+    if (DevUtils.isProduction(req)) {
+        var mainHtmlName = config_name + ".html";
+        var outMainHTML = path.join(baseDir,config_out,mainHtmlName);
+        res.render(outMainHTML, data, callback);
+    } else {
 
-            var configObj = config.getConfig();
-            var serverROOT = configObj.serverROOT;
-            var staticROOT = configObj.staticROOT;
+        var configObj = config.getConfig();
+        var serverROOT = configObj.serverROOT;
+        var staticROOT = configObj.staticROOT;
 
-            var scriptArray = toScriptArray(config_js, baseDir, serverROOT, 'js', staticROOT);
-            var styleArray = toScriptArray(config_css, baseDir, serverROOT, 'css', staticROOT);
-            var htmlArray = toScriptArray(config_html, baseDir, serverROOT, 'html', staticROOT);
+        var scriptArray = toScriptArray(config_js, baseDir, serverROOT, 'js', staticROOT);
+        var styleArray = toScriptArray(config_css, baseDir, serverROOT, 'css', staticROOT);
+        var htmlArray = toScriptArray(config_html, baseDir, serverROOT, 'html', staticROOT);
 
-            var html2js_comb_name = configObj.html2js_comb_name;
-            scriptArray.unshift('<script src="'+html2js_comb_name+'?output=' + html2js_tpl_name + '&htmls=' + htmlArray.join(',') + '&v=_' + new Date().getTime() + '"></script>');
+        var html2js_comb_name = configObj.html2js_comb_name;
+        scriptArray.unshift('<script src="'+html2js_comb_name+'?output=' + html2js_tpl_name + '&htmls=' + htmlArray.join(',') + '&v=_' + new Date().getTime() + '"></script>');
 
-            var includeStyle = styleArray.join('\n');
-            var includeScript = scriptArray.join('\n');
+        var includeStyle = styleArray.join('\n');
+        var includeScript = scriptArray.join('\n');
 
-            data['_includeStyle_'] = includeStyle;
-            data['_includeScript_'] = includeScript;
+        data['_includeStyle_'] = includeStyle;
+        data['_includeScript_'] = includeScript;
 
-            var sourceMainHTML = path.join(baseDir, config_main);
-            res.render(sourceMainHTML, data ,function(a,b,c){
-                callback && callback(a,b,c);
-            });
-        }
-
-    });
+        var sourceMainHTML = path.join(baseDir, config_main);
+        res.render(sourceMainHTML, data ,callback);
+    }
 
 }
 
 
+
+
+function renderPageInclude(req, res, data, jsonPath ,callback) {
+    data = data || {};
+    fs.readFile(jsonPath, 'utf-8', function (err, jsonStr) {
+        if(err){
+            res.send(err);
+            return;
+        }
+        var jsonConfig = JSON.parse(jsonStr);
+        var baseDir = path.dirname(jsonPath);
+        renderPageIncludeByConfig(req, res, data, jsonConfig ,baseDir,callback);
+    });
+}
+
+
 module.exports = {
-    renderPageInclude: renderPageInclude
+    renderPageInclude: renderPageInclude,
+    renderPageIncludeByConfig:renderPageIncludeByConfig
 };

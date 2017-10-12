@@ -10,17 +10,20 @@ function extendObject(a, b) {
 }
 
 
-var serverROOT =  path.join(__dirname, "../../..");
-var staticROOT =  path.join(serverROOT,"./static");
+var serverROOT = path.join(__dirname, "../../..");
+var staticROOT = path.join(serverROOT, "./static");
 
 var config = {
-    html2js_comb_name:'/html2js.js',
+    html2js_comb_name: '/html2js.js',
     html2js_tpl_name: "html2js_tpl",
     html2js_comb_cache: false,
     html2js_comb_base: staticROOT,
     serverROOT: serverROOT,
-    staticROOT: staticROOT
+    staticROOT: staticROOT,
+    exclude_prefix: "_",
+    build_out_path: './_dist'
 };
+
 
 module.exports = {
     doConfig: function (config0) {

@@ -1,26 +1,16 @@
-# express-kit
+#
 
+## _build.js
 
+```
+require('express-kit').build(__dirname);
+```
 
-## json文件
+## router
 
-``` javascript
-{
-  "html": [
-    "views/aaa.shtml"
-  ],
-  "js": [
-    "./index.js",
-    "./apis.js",
-    "./views/aaa.js"
-  ],
-  "css": [
-    "./views/aaa.css"
-  ],
-
-  "name": "admin",
-  "main": "./index.html",
-  "out": "../../client-assets/admin/"
-}
-
+```
+router.get('/admin',function(req,res){
+    var p = path.join(__dirname,'../../static/admin');
+    ExpressKit.render(req,res,{},p);
+});
 ```
