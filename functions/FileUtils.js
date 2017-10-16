@@ -57,7 +57,6 @@ function createJsonConfig_getWeight(fileOrder,a){
 function createJsonConfig(dir_path){
     var fileList = getFolderFiles(dir_path,[]);
     var fileOrder = ['common','func','util','apis','store','action','comp','view','page','src'];
-    var lastOrder = ['main','index'];
     var fileListRemoveBase = fileList.map(function(filePath){
         return filePath.replace(dir_path +  path.sep ,'');
     });
@@ -65,6 +64,9 @@ function createJsonConfig(dir_path){
     fileListRemoveBase = fileListRemoveBase.sort(function(a,b){
         var weight_a = createJsonConfig_getWeight(fileOrder,a);
         var weight_b = createJsonConfig_getWeight(fileOrder,b);
+        if(weight_a === weight_b){
+            return a.localeCompare(b);
+        }
         return weight_a - weight_b;
     });
 
