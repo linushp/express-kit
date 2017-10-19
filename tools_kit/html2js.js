@@ -23,12 +23,15 @@ function htmlArray2js(dirPath, htmlPathArray) {
 }
 
 
-function getHtml2JsContent(dirPath, htmlPathArray,varName) {
-    var js = htmlArray2js(dirPath, htmlPathArray || []);
-    var jsStr = JSON.stringify(js);
-    return "var "+ varName +" = " + jsStr + ";";
-}
 
+function getHtml2JsContent(dirPath, htmlPathArray,varName) {
+    if(htmlPathArray && htmlPathArray.length > 0){
+        var js = htmlArray2js(dirPath, htmlPathArray || []);
+        var jsStr = JSON.stringify(js);
+        return "var "+ varName +" = " + jsStr + ";";
+    }
+    return '';
+}
 
 
 module.exports = {
