@@ -59,8 +59,10 @@ function renderPageIncludeByConfig(req, res, data, jsonConfig ,baseDir,callback)
         var styleArray = toScriptArray(config_css, baseDir, serverROOT, 'css', staticROOT);
         var htmlArray = toScriptArray(config_html, baseDir, serverROOT, 'html', staticROOT);
 
-        var html2js_comb_name = configObj.html2js_comb_name;
-        scriptArray.unshift('<script src="'+html2js_comb_name+'?output=' + html2js_tpl_name + '&htmls=' + htmlArray.join(',') + '&v=_' + new Date().getTime() + '"></script>');
+        if (htmlArray.length > 0) {
+            var html2js_comb_name = configObj.html2js_comb_name;
+            scriptArray.unshift('<script src="' + html2js_comb_name + '?output=' + html2js_tpl_name + '&htmls=' + htmlArray.join(',') + '&v=_' + new Date().getTime() + '"></script>');
+        }
 
         var includeStyle = styleArray.join('\n');
         var includeScript = scriptArray.join('\n');
