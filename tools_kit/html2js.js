@@ -23,7 +23,6 @@ function htmlArray2js(dirPath, htmlPathArray) {
 }
 
 
-
 function getHtml2JsContent(dirPath, htmlPathArray,varName) {
     if(htmlPathArray && htmlPathArray.length > 0){
         var js = htmlArray2js(dirPath, htmlPathArray || []);
@@ -32,6 +31,7 @@ function getHtml2JsContent(dirPath, htmlPathArray,varName) {
     }
     return '';
 }
+
 
 
 module.exports = {

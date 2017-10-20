@@ -39,12 +39,12 @@ module.exports = {
     },
 
 
-    build:function(dir_path){
+    build:function(dir_path,buildConfig){
         var time1 = new Date().getTime();
         var sss = FileUtils.createJsonConfig(dir_path);
         var time2 = new Date().getTime();
         console.log(JSON.stringify(sss));
-        minifyKit.minifyByJSONConfig(dir_path,sss);
+        minifyKit.minifyByJSONConfig(dir_path,sss,buildConfig || {});
         console.info("\nBuild Successfully , Cost time :" + (time2-time1));
     },
 

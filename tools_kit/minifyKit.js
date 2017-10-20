@@ -2,6 +2,7 @@ var fs = require('fs');
 var path = require('path');
 var UglifyJS = require('uglify-js');
 var html2js = require('./html2js');
+var cssmin = require('./cssmin');
 
 
 var config = require('../functions/config');
@@ -12,8 +13,9 @@ function minifyCssCode(baseDir, cssArray) {
     for (var i = 0; i < cssArray.length; i++) {
         var cssName = cssArray[i];
         var cssPath = path.join(baseDir, cssName);
-        var jsContent = fs.readFileSync(cssPath, 'utf-8');
-        cssContentArray.push(jsContent);
+        var cssContent = fs.readFileSync(cssPath, 'utf-8');
+        cssContent = cssmin(cssContent);
+        cssContentArray.push(cssContent);
     }
     return cssContentArray.join("\n");
 }
@@ -29,7 +31,7 @@ function minifyJavaScript(baseDir, jsArray) {
         if (jsContent1.error) {
             console.log(jsContent1.error);
         }
-        jsContentArray.push("\n//" + jsName);
+        //jsContentArray.push("\n//" + jsName);
         jsContentArray.push(jsContent1.code);
     }
 
@@ -45,18 +47,11 @@ function toStaticPath(jsName, outDir) {
 }
 
 
-function getMainHtmlContent(baseDir, config_main, jsName, cssName, config_out) {
-
-    var outDir = path.join(baseDir, config_out);
-
-    var style = ' <link rel="stylesheet" href="' + toStaticPath(cssName, outDir) + '" />';
-    var script = '<script type="text/javascript" src="' + toStaticPath(jsName, outDir) + '"></script>';
-
+function getMainHtmlContent(baseDir, config_main, script, style) {
     var htmlPath = path.join(baseDir, config_main);
     var htmlContent = fs.readFileSync(htmlPath, 'utf-8');
     htmlContent = htmlContent.replace(/<%-\s{0,10}_includeStyle_\s{0,10}%>/gm, style);
     htmlContent = htmlContent.replace(/<%-\s{0,10}_includeScript_\s{0,10}%>/gm, script);
-
     return htmlContent;
 }
 
@@ -89,7 +84,7 @@ function deleteFolder(dir_path) {
 }
 
 
-function minifyByJSONConfig(baseDir,jsonConfig) {
+function minifyByJSONConfig(baseDir,jsonConfig,buildConfig) {
 
     var config_js = jsonConfig['js'] || [];
     var config_css = jsonConfig['css'] || [];
@@ -97,6 +92,10 @@ function minifyByJSONConfig(baseDir,jsonConfig) {
     var config_name = jsonConfig['name'] || 'index';
     var config_out = jsonConfig['out'] || './_dist';
     var config_main = jsonConfig['main'] || './index.html';
+
+
+    var is_inline_script = buildConfig.inline_script;
+    var is_inline_style = buildConfig.inline_style;
 
     //1.删除之前的目录
     deleteFolder(path.join(baseDir, config_out));
@@ -111,17 +110,42 @@ function minifyByJSONConfig(baseDir,jsonConfig) {
     var jsCode = minifyJavaScript(baseDir, config_js);
     jsCode = htmlString + "\n" + jsCode;
     var jsName = config_name + "." + buildTime + ".min.js";
-    outFile(jsCode, jsName, baseDir, config_out);
+
+
+    if(!is_inline_script){
+        outFile(jsCode, jsName, baseDir, config_out);
+    }
 
 
     //4.编译CSS文件
     var cssCode = minifyCssCode(baseDir, config_css);
     var cssName = config_name + "." + buildTime + ".min.css";
-    outFile(cssCode, cssName, baseDir, config_out);
+
+    if(!is_inline_style){
+        outFile(cssCode, cssName, baseDir, config_out);
+    }
+
 
 
     //5. 输出HTML主页面
-    var mainHtml = getMainHtmlContent(baseDir, config_main, jsName, cssName, config_out);
+    var outDir = path.join(baseDir, config_out);
+    var style,script;
+
+    if(!is_inline_style){
+        style = ' <link rel="stylesheet" href="' + toStaticPath(cssName, outDir) + '" />';
+    }else {
+        style = '<style type="text/css">\n'+cssCode+'\n</style>'
+    }
+
+
+    if(!is_inline_script){
+        script = '<script type="text/javascript" src="' + toStaticPath(jsName, outDir) + '"></script>';
+    }else {
+        script = '<script type="text/javascript">'+jsCode+'</script>';
+    }
+
+
+    var mainHtml = getMainHtmlContent(baseDir, config_main, script, style);
     var mainHtmlName = config_name + ".html";
     outFile(mainHtml, mainHtmlName, baseDir, config_out);
 
