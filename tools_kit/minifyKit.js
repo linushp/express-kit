@@ -47,9 +47,15 @@ function toStaticPath(jsName, outDir) {
 }
 
 
-function getMainHtmlContent(baseDir, config_main, script, style) {
+function getMainHtmlContent(baseDir, config_main, script, style, is_minify_html) {
     var htmlPath = path.join(baseDir, config_main);
     var htmlContent = fs.readFileSync(htmlPath, 'utf-8');
+
+    if (is_minify_html) {
+        htmlContent = htmlContent.replace(/\n/gm, '');
+        htmlContent = htmlContent.replace(/\s{2,}/mg, ' ');
+    }
+
     htmlContent = htmlContent.replace(/<%-\s{0,10}_includeStyle_\s{0,10}%>/gm, style);
     htmlContent = htmlContent.replace(/<%-\s{0,10}_includeScript_\s{0,10}%>/gm, script);
     return htmlContent;
@@ -84,7 +90,7 @@ function deleteFolder(dir_path) {
 }
 
 
-function minifyByJSONConfig(baseDir,jsonConfig,buildConfig) {
+function minifyByJSONConfig(baseDir, jsonConfig, buildConfig) {
 
     var config_js = jsonConfig['js'] || [];
     var config_css = jsonConfig['css'] || [];
@@ -96,6 +102,8 @@ function minifyByJSONConfig(baseDir,jsonConfig,buildConfig) {
 
     var is_inline_script = buildConfig.inline_script;
     var is_inline_style = buildConfig.inline_style;
+    var is_minify_html = buildConfig.is_minify_html;
+
 
     //1.删除之前的目录
     deleteFolder(path.join(baseDir, config_out));
@@ -112,7 +120,7 @@ function minifyByJSONConfig(baseDir,jsonConfig,buildConfig) {
     var jsName = config_name + "." + buildTime + ".min.js";
 
 
-    if(!is_inline_script){
+    if (!is_inline_script) {
         outFile(jsCode, jsName, baseDir, config_out);
     }
 
@@ -121,31 +129,30 @@ function minifyByJSONConfig(baseDir,jsonConfig,buildConfig) {
     var cssCode = minifyCssCode(baseDir, config_css);
     var cssName = config_name + "." + buildTime + ".min.css";
 
-    if(!is_inline_style){
+    if (!is_inline_style) {
         outFile(cssCode, cssName, baseDir, config_out);
     }
 
 
-
     //5. 输出HTML主页面
     var outDir = path.join(baseDir, config_out);
-    var style,script;
+    var style, script;
 
-    if(!is_inline_style){
+    if (!is_inline_style) {
         style = ' <link rel="stylesheet" href="' + toStaticPath(cssName, outDir) + '" />';
-    }else {
-        style = '<style type="text/css">\n'+cssCode+'\n</style>'
+    } else {
+        style = '<style type="text/css">\n' + cssCode + '\n</style>'
     }
 
 
-    if(!is_inline_script){
+    if (!is_inline_script) {
         script = '<script type="text/javascript" src="' + toStaticPath(jsName, outDir) + '"></script>';
-    }else {
-        script = '<script type="text/javascript">'+jsCode+'</script>';
+    } else {
+        script = '<script type="text/javascript">' + jsCode + '</script>';
     }
 
 
-    var mainHtml = getMainHtmlContent(baseDir, config_main, script, style);
+    var mainHtml = getMainHtmlContent(baseDir, config_main, script, style, is_minify_html);
     var mainHtmlName = config_name + ".html";
     outFile(mainHtml, mainHtmlName, baseDir, config_out);
 
@@ -156,7 +163,7 @@ function minifyByJSON(jsonPath) {
     var baseDir = path.dirname(jsonPath);
     var jsonStr = fs.readFileSync(jsonPath, 'utf-8');
     var jsonConfig = JSON.parse(jsonStr);
-    return minifyByJSONConfig(baseDir,jsonConfig);
+    return minifyByJSONConfig(baseDir, jsonConfig);
 }
 
 
