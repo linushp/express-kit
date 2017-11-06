@@ -7,16 +7,20 @@ var fs = require('fs');
 function toScriptArray(jsArray0, baseDir, serverROOT, type, staticROOT) {
     jsArray0 = jsArray0 || [];
     var scriptArray = [];
+
+    var version = new Date().getTime();
+
     for (var i = 0; i < jsArray0.length; i++) {
         var js = jsArray0[i];
         var srcPath = '';
         var srcPath0 = path.join(baseDir, js);
+
         if (type ==='js') {
             srcPath = srcPath0.replace(serverROOT, '');
-            scriptArray.push('<script src="' + srcPath + '"></script>');
+            scriptArray.push('<script src="' + srcPath + '?_v='+version+'"></script>');
         } else if(type ==='css'){
             srcPath = srcPath0.replace(serverROOT, '');
-            scriptArray.push('<link type="text/css" href="' + srcPath + '" rel="stylesheet" />');
+            scriptArray.push('<link type="text/css" href="' + srcPath + '?_v='+version+'" rel="stylesheet" />');
         } else if(type ==='html'){
             srcPath = srcPath0.replace(staticROOT, '');
             if(srcPath.indexOf('/')===0){
