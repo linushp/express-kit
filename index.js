@@ -52,12 +52,23 @@ module.exports = {
 
 
     render: function (req, res, dir_path, data, callback) {
+
+        var c = config.getConfig();
+
+        var productionStaticPrefix = c.productionStaticPrefix || "";
+
+        data = Object.assign({
+            _productionStaticPrefix_: productionStaticPrefix
+        }, data || {});
+
+
         if (DevUtils.isProduction(req)) {
-            var outMainHTML = path.join(dir_path,'./_dist/index.html');
+            var outMainHTML = path.join(dir_path, './_dist/index.html');
             res.render(outMainHTML, data, callback);
         } else {
             var jsonConfig = FileUtils.createJsonConfig(dir_path);
             return html2jsServer.renderPageIncludeByConfig(req, res, data, jsonConfig, dir_path, callback);
         }
+
     }
 };

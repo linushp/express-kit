@@ -43,7 +43,7 @@ function toStaticPath(jsName, outDir) {
     var jsPath = path.join(outDir, jsName);
     var configObj = config.getConfig();
     var serverRoot = configObj.serverROOT;
-    return jsPath.replace(serverRoot, '');
+    return "<%- _productionStaticPrefix_ %>" +jsPath.replace(serverRoot, '');
 }
 
 

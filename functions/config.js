@@ -20,7 +20,8 @@ var config = {
     html2js_comb_base: staticROOT,
     serverROOT: serverROOT,
     staticROOT: staticROOT,
-    exclude_prefix: "_"
+    exclude_prefix: "_",
+    productionStaticPrefix:""
 };
 
 
