@@ -57,14 +57,7 @@ module.exports = {
     
     render: function (req, res, dir_path, data, callback) {
 
-        var c = config.getConfig();
-
-        var productionStaticPrefix = c.productionStaticPrefix || "";
-
-        data = Object.assign({
-            _productionStaticPrefix_: productionStaticPrefix
-        }, data || {});
-
+        data = Object.assign({}, data || {});
 
         if (DevUtils.isProduction(req)) {
             var outMainHTML = path.join(dir_path, './_dist/index.html');
