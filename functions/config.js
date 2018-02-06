@@ -21,8 +21,8 @@ var config = {
     serverROOT: serverROOT,
     staticROOT: staticROOT,
     exclude_prefix: "_",
-    productionStaticPrefix:""
 };
+
 
 
 module.exports = {

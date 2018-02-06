@@ -78,7 +78,7 @@ function createJsonConfig(dir_path){
         "css": [],
         "name": "index",
         "main": "./index.html"
-    }
+    };
 
     for (var i = 0; i < fileListRemoveBase.length; i++) {
         var fileName = fileListRemoveBase[i];

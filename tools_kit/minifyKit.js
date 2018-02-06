@@ -39,11 +39,16 @@ function minifyJavaScript(baseDir, jsArray) {
 }
 
 
-function toStaticPath(jsName, outDir) {
+function toStaticPath(jsName, outDir,prod_prefix) {
     var jsPath = path.join(outDir, jsName);
     var configObj = config.getConfig();
     var serverRoot = configObj.serverROOT;
-    return "<%- _productionStaticPrefix_ %>" +jsPath.replace(serverRoot, '');
+
+    if (prod_prefix) {
+        return "<%- " + prod_prefix + " %>" + jsPath.replace(serverRoot, '');
+    }
+    return jsPath.replace(serverRoot, '');
+
 }
 
 
@@ -60,6 +65,7 @@ function getMainHtmlContent(baseDir, config_main, script, style, is_minify_html)
     htmlContent = htmlContent.replace(/<%-\s{0,10}_includeScript_\s{0,10}%>/gm, script);
     return htmlContent;
 }
+
 
 function outFile(content, name, baseDir, config_out) {
     var outPath = path.join(baseDir, config_out, name);
@@ -103,6 +109,7 @@ function minifyByJSONConfig(baseDir, jsonConfig, buildConfig) {
     var is_inline_script = buildConfig.inline_script;
     var is_inline_style = buildConfig.inline_style;
     var is_minify_html = buildConfig.is_minify_html;
+    var prod_prefix = buildConfig.prod_prefix || "";
 
 
     //1.删除之前的目录
@@ -139,14 +146,14 @@ function minifyByJSONConfig(baseDir, jsonConfig, buildConfig) {
     var style, script;
 
     if (!is_inline_style) {
-        style = ' <link rel="stylesheet" href="' + toStaticPath(cssName, outDir) + '" />';
+        style = ' <link rel="stylesheet" href="' + toStaticPath(cssName, outDir,prod_prefix) + '" />';
     } else {
         style = '<style type="text/css">\n' + cssCode + '\n</style>'
     }
 
 
     if (!is_inline_script) {
-        script = '<script type="text/javascript" src="' + toStaticPath(jsName, outDir) + '"></script>';
+        script = '<script type="text/javascript" src="' + toStaticPath(jsName, outDir,prod_prefix) + '"></script>';
     } else {
         script = '<script type="text/javascript">' + jsCode + '</script>';
     }

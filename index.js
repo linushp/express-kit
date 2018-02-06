@@ -41,6 +41,10 @@ module.exports = {
     },
 
 
+    /**
+     * @param dir_path
+     * @param buildConfig {inline_script:boolean,inline_style:boolean,is_minify_html:boolean,prod_prefix:string}
+     */
     build:function(dir_path,buildConfig){
         var time1 = new Date().getTime();
         var sss = FileUtils.createJsonConfig(dir_path);
@@ -50,7 +54,7 @@ module.exports = {
         console.info("\nBuild Successfully , Cost time :" + (time2-time1));
     },
 
-
+    
     render: function (req, res, dir_path, data, callback) {
 
         var c = config.getConfig();
