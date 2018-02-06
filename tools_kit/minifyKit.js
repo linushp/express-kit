@@ -22,6 +22,11 @@ function minifyCssCode(baseDir, cssArray) {
 
 
 function minifyJavaScript(baseDir, jsArray) {
+
+    if(!jsArray || jsArray.length === 0){
+        return "";
+    }
+
     var jsContentArray = [];
     for (var i = 0; i < jsArray.length; i++) {
         var jsName = jsArray[i];
@@ -54,6 +59,11 @@ function toStaticPath(jsName, outDir,prod_prefix) {
 
 function getMainHtmlContent(baseDir, config_main, script, style, is_minify_html) {
     var htmlPath = path.join(baseDir, config_main);
+
+    if(!fs.existsSync(htmlPath)){
+        return null;
+    }
+
     var htmlContent = fs.readFileSync(htmlPath, 'utf-8');
 
     if (is_minify_html) {
@@ -160,9 +170,10 @@ function minifyByJSONConfig(baseDir, jsonConfig, buildConfig) {
 
 
     var mainHtml = getMainHtmlContent(baseDir, config_main, script, style, is_minify_html);
-    var mainHtmlName = config_name + ".html";
-    outFile(mainHtml, mainHtmlName, baseDir, config_out);
-
+    if(mainHtml){
+        var mainHtmlName = config_name + ".html";
+        outFile(mainHtml, mainHtmlName, baseDir, config_out);
+    }
 }
 
 
