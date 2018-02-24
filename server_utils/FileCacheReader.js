@@ -30,7 +30,7 @@ var FileCacheReader = {
         });
     },
 
-    readJsonFile: function (file_path) {
+    readJSONFile: function (file_path) {
         return FileCacheReader.readFile(file_path).then(function (d) {
             return JSON.parse(d);
         });
@@ -71,63 +71,71 @@ var FileCacheReader = {
         });
     },
 
-    _makeCacheable: async function (funcName, request_url, cache_second) {
+    _makeCacheable: function (funcName, request_url, cache_second) {
         var timeStramp_now = new Date().getTime();
 
         //1.如果需要缓存,并且缓存没有过期
         if (cache_second) {
             var cache_data_f = cache_data[request_url];
             if (cache_data_f && cache_data_f.timeStramp && (cache_data_f.timeStramp + cache_second * 1000 >= timeStramp_now)) {
-                return cache_data_f.data;
+                return Promise.resolve(cache_data_f.data);
             }
         }
 
-        var data = null;
+
+        //2. 没有缓存的时候，发起实际请求
+        var requestPromise = null;
 
         try {
             if (funcName === "sendGetJsonRequest") {
-                data = await FileCacheReader.sendGetJsonRequest(request_url);
+                requestPromise = FileCacheReader.sendGetJsonRequest(request_url);
             } else if (funcName === "sendGetRequest") {
-                data = await FileCacheReader.sendGetRequest(request_url);
+                requestPromise = FileCacheReader.sendGetRequest(request_url);
             } else if (funcName === "readFile") {
-                data = await FileCacheReader.readFile(request_url);
-            } else if (funcName === "readJsonFile") {
-                data = await FileCacheReader.readJsonFile(request_url);
+                requestPromise = FileCacheReader.readFile(request_url);
+            } else if (funcName === "readJSONFile") {
+                requestPromise = FileCacheReader.readJSONFile(request_url);
             }
         } catch (e) {
             console.log("[ERROR]FileCacheReader." + funcName, e);
-            return null;
+            return Promise.reject({
+                funcName: funcName, request_url: request_url, cache_second: cache_second, e: e
+            });
         }
 
-        //2.如果需要缓存,缓存一下
-        if (cache_second) {
-            cache_data[request_url] = {
-                timeStramp: timeStramp_now,
-                data: data
-            };
+        if (requestPromise) {
+            return requestPromise.then(function (data) {
+                if (cache_second) {
+                    cache_data[request_url] = {
+                        timeStramp: new Date().getTime(),
+                        data: data
+                    };
+                }
+                return data;
+            });
         }
 
-        return data;
+        return Promise.reject({
+            funcName: funcName, request_url: request_url, cache_second: cache_second, e: null
+        });
+
     },
 
 
-
-    httpRequestJSONCache: async function (request_url, cache_second) {
+    sendGetJsonRequestCache: function (request_url, cache_second) {
         return FileCacheReader._makeCacheable("sendGetJsonRequest", request_url, cache_second);
     },
-    httpRequestCache: async function (request_url, cache_second) {
+    sendGetRequestCache: function (request_url, cache_second) {
         return FileCacheReader._makeCacheable("sendGetRequest", request_url, cache_second);
     },
-    readFileCache: async function (request_url, cache_second) {
+    readFileCache: function (request_url, cache_second) {
         return FileCacheReader._makeCacheable("readFile", request_url, cache_second);
     },
-    readJSONFileCache: async function (request_url, cache_second) {
-        return FileCacheReader._makeCacheable("readJsonFile", request_url, cache_second);
+    readJSONFileCache: function (request_url, cache_second) {
+        return FileCacheReader._makeCacheable("readJSONFile", request_url, cache_second);
     }
 
 };
-
-
 
 
 module.exports = FileCacheReader;

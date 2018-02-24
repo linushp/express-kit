@@ -6,6 +6,7 @@ var DevUtils = require('./server_utils/DevUtils');
 var html2jsCombo = require('./server_utils/html2jsCombo');
 var html2jsServer = require('./server_utils/html2jsServer');
 var languageParser = require('./server_utils/languageParser');
+var FileCacheReader = require('./server_utils/FileCacheReader');
 var config = require('./functions/config');
 var FileUtils = require('./functions/FileUtils');
 var minifyKit = require('./tools_kit/minifyKit');
@@ -18,7 +19,8 @@ module.exports = {
 
     DevUtils: DevUtils,
     html2jsCombo: html2jsCombo,
-    languageParser:languageParser,
+    languageParser: languageParser,
+    FileCacheReader: FileCacheReader,
 
     html2jsRender: function (req, res, data, jsonPath, callback) {
         return html2jsServer.renderPageInclude(req, res, data, jsonPath, callback);
