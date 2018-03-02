@@ -37,15 +37,15 @@ var FileCacheReader = {
     },
 
 
-    sendGetRequest: function (url) {
+    sendGetRequest: function (urlOrOptions) {
         return new Promise(function (resolve, reject) {
 
             var http_protocol = http;
-            if (url.indexOf("https") === 0) {
+            if (typeof urlOrOptions === "string" &&  urlOrOptions.indexOf("https") === 0) {
                 http_protocol = https;
             }
 
-            http_protocol.get(url, function (http_res) {
+            http_protocol.get(urlOrOptions, function (http_res) {
                 http_res.setEncoding('utf8');
                 var rawData = '';
                 http_res.on('data', function (chunk) {
