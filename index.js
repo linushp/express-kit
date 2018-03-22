@@ -10,13 +10,14 @@ var FileCacheReader = require('./server_utils/FileCacheReader');
 var config = require('./functions/config');
 var FileUtils = require('./functions/FileUtils');
 var minifyKit = require('./tools_kit/minifyKit');
+var copyAndReplace = require('./tools_kit/copyAndReplace');
 
 
 module.exports = {
     doConfig: function (config0) {
         return config.doConfig(config0)
     },
-
+    copyAndReplace:copyAndReplace,
     DevUtils: DevUtils,
     html2jsCombo: html2jsCombo,
     languageParser: languageParser,

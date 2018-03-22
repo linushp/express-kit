@@ -8,3 +8,4 @@ server_config.json
 package-lock.json
 pki-validation
 deploy.sh
+_test/
