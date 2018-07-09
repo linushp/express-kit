@@ -50,7 +50,7 @@ function toStaticPath(jsName, outDir,prod_prefix) {
     var serverRoot = configObj.serverROOT;
 
     if (prod_prefix) {
-        return "<%- " + prod_prefix + " %>" + jsPath.replace(serverRoot, '');
+        return prod_prefix + jsPath.replace(serverRoot, '');
     }
     return jsPath.replace(serverRoot, '');
 
