@@ -44,12 +44,19 @@ function minifyJavaScript(baseDir, jsArray) {
 }
 
 
+function isFunction(obj) {
+    return Object.prototype.toString.call(obj) === '[object Function]';
+}
+
 function toStaticPath(jsName, outDir,prod_prefix) {
     var jsPath = path.join(outDir, jsName);
     var configObj = config.getConfig();
     var serverRoot = configObj.serverROOT;
 
-    if (prod_prefix) {
+    if (isFunction(prod_prefix)){
+        return prod_prefix(jsPath.replace(serverRoot, ''));
+    }
+    else if (prod_prefix) {
         return prod_prefix + jsPath.replace(serverRoot, '');
     }
     return jsPath.replace(serverRoot, '');
