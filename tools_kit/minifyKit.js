@@ -48,16 +48,16 @@ function isFunction(obj) {
     return Object.prototype.toString.call(obj) === '[object Function]';
 }
 
-function toStaticPath(jsName, outDir,prod_prefix) {
+function toStaticPath(jsName, outDir,prod_htmlSrc) {
     var jsPath = path.join(outDir, jsName);
     var configObj = config.getConfig();
     var serverRoot = configObj.serverROOT;
 
-    if (isFunction(prod_prefix)){
-        return prod_prefix(jsPath.replace(serverRoot, ''));
+    if (isFunction(prod_htmlSrc)){
+        return prod_htmlSrc(jsPath.replace(serverRoot, ''));
     }
-    else if (prod_prefix) {
-        return prod_prefix + jsPath.replace(serverRoot, '');
+    else if (prod_htmlSrc) {
+        return prod_htmlSrc + jsPath.replace(serverRoot, '');
     }
     return jsPath.replace(serverRoot, '');
 
@@ -126,7 +126,10 @@ function minifyByJSONConfig(baseDir, jsonConfig, buildConfig) {
     var is_inline_script = buildConfig.inline_script;
     var is_inline_style = buildConfig.inline_style;
     var is_minify_html = buildConfig.is_minify_html;
-    var prod_prefix = buildConfig.prod_prefix || "";
+    var prod_htmlSrc = buildConfig.prod_htmlSrc || "";
+    var prod_fileName = buildConfig.prod_fileName || function (x) {
+        return x;
+    };
 
 
     //1.删除之前的目录
@@ -141,7 +144,7 @@ function minifyByJSONConfig(baseDir, jsonConfig, buildConfig) {
     //3.编译JS文件
     var jsCode = minifyJavaScript(baseDir, config_js);
     jsCode = htmlString + "\n" + jsCode;
-    var jsName = config_name + "." + buildTime + ".min.js";
+    var jsName = prod_fileName(config_name + "." + buildTime + ".min.js");
 
 
     if (!is_inline_script) {
@@ -151,7 +154,7 @@ function minifyByJSONConfig(baseDir, jsonConfig, buildConfig) {
 
     //4.编译CSS文件
     var cssCode = minifyCssCode(baseDir, config_css);
-    var cssName = config_name + "." + buildTime + ".min.css";
+    var cssName = prod_fileName(config_name + "." + buildTime + ".min.css");
 
     if (!is_inline_style) {
         outFile(cssCode, cssName, baseDir, config_out);
@@ -163,21 +166,21 @@ function minifyByJSONConfig(baseDir, jsonConfig, buildConfig) {
     var style, script;
 
     if (!is_inline_style) {
-        style = ' <link rel="stylesheet" href="' + toStaticPath(cssName, outDir,prod_prefix) + '" />';
+        style = '<link rel="stylesheet" href="' + toStaticPath(cssName, outDir, prod_htmlSrc) + '" />';
     } else {
         style = '<style type="text/css">\n' + cssCode + '\n</style>'
     }
 
 
     if (!is_inline_script) {
-        script = '<script type="text/javascript" src="' + toStaticPath(jsName, outDir,prod_prefix) + '"></script>';
+        script = '<script type="text/javascript" src="' + toStaticPath(jsName, outDir, prod_htmlSrc) + '"></script>';
     } else {
         script = '<script type="text/javascript">' + jsCode + '</script>';
     }
 
 
     var mainHtml = getMainHtmlContent(baseDir, config_main, script, style, is_minify_html);
-    if(mainHtml){
+    if (mainHtml) {
         var mainHtmlName = config_name + ".html";
         outFile(mainHtml, mainHtmlName, baseDir, config_out);
     }
