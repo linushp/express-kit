@@ -44,27 +44,36 @@ function getFolderFiles(dir_path,resultList) {
 
 
 
-function createJsonConfig_getWeight(fileOrder,a){
+function createJsonConfig_getWeight(fileOrder,lastOrder,a){
     for (var i = 0; i < fileOrder.length; i++) {
         var obj = fileOrder[i];
         if(a.indexOf(obj) === 0){
             return i;
         }
     }
+
+
+    for (var i = 0; i < lastOrder.length; i++) {
+        var obj = lastOrder[i];
+        if(a.indexOf(obj) === 0){
+            return (2000 + i);
+        }
+    }
+
     return 999;
 }
 
 function createJsonConfig(dir_path){
     var fileList = getFolderFiles(dir_path,[]);
-    var fileOrder = ['common','func','util','apis','store','action','comp','view','page','src'];
+    var fileOrder = ['framework','common','func','util','api','store','action','comp','view','page','src'];
     var lastOrder = ['main','index'];
     var fileListRemoveBase = fileList.map(function(filePath){
         return filePath.replace(dir_path +  path.sep ,'');
     });
 
     fileListRemoveBase = fileListRemoveBase.sort(function(a,b){
-        var weight_a = createJsonConfig_getWeight(fileOrder,a);
-        var weight_b = createJsonConfig_getWeight(fileOrder,b);
+        var weight_a = createJsonConfig_getWeight(fileOrder,lastOrder,a);
+        var weight_b = createJsonConfig_getWeight(fileOrder,lastOrder,b);
         if(weight_a === weight_b){
             return a.localeCompare(b);
         }
