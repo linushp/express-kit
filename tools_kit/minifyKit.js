@@ -34,7 +34,8 @@ function minifyJavaScript(baseDir, jsArray) {
         var jsContent = fs.readFileSync(jsPath, 'utf-8');
         var jsContent1 = UglifyJS.minify(jsContent);
         if (jsContent1.error) {
-            console.log(jsContent1.error);
+            console.error("minify error : " + jsName);
+            console.log(jsContent1,jsName);
         }
         //jsContentArray.push("\n//" + jsName);
         jsContentArray.push(jsContent1.code);
