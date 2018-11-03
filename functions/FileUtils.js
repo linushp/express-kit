@@ -111,7 +111,7 @@ function createJsonConfig_getWeight(fileOrder,lastOrder,a){
 }
 
 
-function createJsonConfigByFileList(fileList) {
+function createJsonConfigByFileList(dir_path,fileList) {
 
     var fileOrder = ['framework','common','func','util','api','store','action','comp','view','page','src'];
     var lastOrder = ['main','index'];
@@ -156,14 +156,14 @@ function createJsonConfigByFileList(fileList) {
 function createJsonConfigAsync(dir_path) {
     var promise = getFolderFilesAsync(dir_path,[]);
     return promise.then(function (fileList) {
-        return createJsonConfigByFileList(fileList);
+        return createJsonConfigByFileList(dir_path,fileList);
     });
 }
 
 
 function createJsonConfig(dir_path){
     var fileList = getFolderFiles(dir_path,[]);
-    return createJsonConfigByFileList(fileList);
+    return createJsonConfigByFileList(dir_path,fileList);
 }
 
 
