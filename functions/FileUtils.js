@@ -41,7 +41,6 @@ async function getFolderFilesAsync(dir_path, resultList) {
             for (var i = 0; i < files.length; i++) {
                 var file = files[i];
                 var curPath = path.join(dir_path, file);
-                console.log(curPath);
 
                 if(!isFileExclude(file)){
                     var f_stats = await fs_async_stat(curPath);
