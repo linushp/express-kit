@@ -1,58 +1,12 @@
-var fs = require("fs");
-var path = require("path");
-var string2template = require('../functions/string2template');
+
 var config = require('../functions/config');
+var string2templateUtils = require('./string2templateUtils');
 
-
-
-
-
-
-
-function htmlArray2js(dirPath, htmlPathArray) {
-    var p = Promise.resolve();
-
-    for (var i = 0; i < htmlPathArray.length; i++) {
-        var htmlPath = (htmlPathArray[i] || '').trim();
-        if (htmlPath) {
-            p = p.then((function (dirPath, htmlPath) {
-                return function (result) {
-                    result = result || {};
-                    return new Promise(function (resolve, reject) {
-                        var filePath = path.resolve(dirPath, htmlPath);
-
-                        if (filePath.indexOf(dirPath) !== 0) {
-                            var errorMsg = {};
-                            errorMsg["read_file_error_" + htmlPath] = "illegal access";
-                            result = string2template.extendObject(result, errorMsg);
-                            resolve(result);
-                            return;
-                        }
-
-                        fs.readFile(filePath, "utf-8", function (err, html) {
-                            if (err) {
-                                var errorMsg = {};
-                                errorMsg["read_file_error_" + htmlPath] = "read file error";
-                                result = string2template.extendObject(result, errorMsg);
-                                resolve(result);
-                            } else {
-                                var htmlObject = string2template.parseString2Html(html);
-                                result = string2template.extendObject(result, htmlObject);
-                                resolve(result);
-                            }
-                        });
-                    });
-                }
-            })(dirPath, htmlPath));
-        }
-    }
-    return p;
-}
 
 
 function getHtml2JsContent(dirPath, htmls) {
     var htmlPathArray = htmls.split(',');
-    var jsPromise = htmlArray2js(dirPath, htmlPathArray);
+    var jsPromise = string2templateUtils.htmlArray2js(dirPath, htmlPathArray);
     return jsPromise.then(function (js) {
         var jsStr = JSON.stringify(js);
         return jsStr;
