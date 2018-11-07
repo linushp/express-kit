@@ -89,9 +89,22 @@ function outFile(content, name, baseDir, config_out) {
     var outPath = path.join(baseDir, config_out, name);
 
     var outDir = path.dirname(outPath);
+    var outDir1 = path.resolve(outPath,'..');
+    var outDir2 = path.dirname(outPath,'../..');
+
+    if (!fs.existsSync(outDir2)) {
+        fs.mkdirSync(outDir2)
+    }
+
+    if (!fs.existsSync(outDir1)) {
+        fs.mkdirSync(outDir1)
+    }
+
     if (!fs.existsSync(outDir)) {
         fs.mkdirSync(outDir)
     }
+
+
     fs.writeFileSync(outPath, content, {encoding: 'utf-8'});
 }
 
@@ -129,14 +142,14 @@ function minifyByJSONConfig(baseDir, jsonConfig, buildConfig) {
     var is_minify_html = buildConfig.is_minify_html;
     var prod_htmlSrc = buildConfig.prod_htmlSrc || "";
     var prod_fileName = buildConfig.prod_fileName || function (x) {
-        return x;
+        return "min" + x;
     };
 
 
     //1.删除之前的目录
     deleteFolder(path.join(baseDir, config_out));
 
-    var buildTime = new Date().getTime();
+    var buildTime = new Date().getTime().toString(32).split("").reverse().join("");
 
     var configObj = config.getConfig();
 
