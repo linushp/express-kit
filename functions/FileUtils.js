@@ -21,10 +21,18 @@ function isFileExclude(fileName){
         exclude_prefix = '_';
     }
 
-    if(fileName.indexOf(exclude_prefix) === 0){
-        return true;
+    if(Array.isArray(exclude_prefix)){
+        for (var i = 0; i < exclude_prefix.length; i++) {
+            var exclude_prefix_i = exclude_prefix[i];
+            if(exclude_prefix_i && fileName.indexOf(exclude_prefix_i) === 0){
+                return true;
+            }
+        }
+    }else {
+        if(fileName.indexOf(exclude_prefix) === 0){
+            return true;
+        }
     }
-
     return false;
 }
 
