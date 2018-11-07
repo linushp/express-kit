@@ -149,7 +149,7 @@ function minifyByJSONConfig(baseDir, jsonConfig, buildConfig) {
     //1.删除之前的目录
     deleteFolder(path.join(baseDir, config_out));
 
-    var buildTime = new Date().getTime().toString(32).split("").reverse().join("");
+    var buildTime = (new Date().getTime()-1541583183867).toString(32).split("").reverse().join("");
 
     var configObj = config.getConfig();
 
