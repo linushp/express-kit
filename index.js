@@ -10,6 +10,7 @@ var FileCacheReader = require('./server_utils/FileCacheReader');
 var string2templateUtils = require('./server_utils/string2templateUtils');
 var config = require('./functions/config');
 var FileUtils = require('./functions/FileUtils');
+var PathUtils = require('./functions/PathUtils');
 var minifyKit = require('./tools_kit/minifyKit');
 var copyAndReplace = require('./tools_kit/copyAndReplace');
 
@@ -82,25 +83,15 @@ module.exports = {
 
     render: function (req, res, page_path, data, callback) {
 
-        var is_page_path = false;
-        var dir_path = "";
-        var xxx = path.extname(page_path);
-        if(xxx === '.html'){
-            is_page_path = true;
-        }else {
-            dir_path = page_path;
-        }
-
-
-
         data = Object.assign({}, data || {});
 
         if (DevUtils.isProduction(req)) {
-            var outMainHTML = is_page_path ? page_path : path.join(dir_path, './_dist/index.html');
+            var outMainHTML = PathUtils.get_page_path(page_path,true);
             res.render(outMainHTML, data, callback);
         } else {
+            var dir_path = PathUtils.get_dir_path(page_path,false);
             var jsonConfig = FileUtils.createJsonConfig(dir_path);
-            return html2jsServer.renderPageIncludeByConfig(req, res, data, jsonConfig, page_path, is_page_path, callback);
+            return html2jsServer.renderPageIncludeByConfig(req, res, data, jsonConfig, page_path, callback);
         }
 
     }
