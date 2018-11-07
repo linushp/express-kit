@@ -90,7 +90,7 @@ function outFile(content, name, baseDir, config_out) {
 
     var outDir = path.dirname(outPath);
     var outDir1 = path.resolve(outPath,'..');
-    var outDir2 = path.dirname(outPath,'../..');
+    var outDir2 = path.resolve(outPath,'../..');
 
     if (!fs.existsSync(outDir2)) {
         fs.mkdirSync(outDir2)
