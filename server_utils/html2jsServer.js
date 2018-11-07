@@ -1,5 +1,6 @@
 var DevUtils = require('./DevUtils');
 var config = require('../functions/config');
+var PathUtils = require('../functions/PathUtils');
 var path = require('path');
 var fs = require('fs');
 
@@ -35,7 +36,7 @@ function toScriptArray(jsArray0, baseDir, serverROOT, type, staticROOT) {
 
 
 
-function renderPageIncludeByConfig(req, res, data, jsonConfig ,baseDir,callback){
+function renderPageIncludeByConfig(req, res, data, jsonConfig ,page_path,callback){
 
     var configObj = config.getConfig();
     var html2js_tpl_name = configObj.html2js_tpl_name;
@@ -49,12 +50,13 @@ function renderPageIncludeByConfig(req, res, data, jsonConfig ,baseDir,callback)
     var config_main = jsonConfig['main'] || './index.html';
 
 
+
     if (DevUtils.isProduction(req)) {
-        var mainHtmlName = config_name + ".html";
-        var outMainHTML = path.join(baseDir,config_out,mainHtmlName);
+        var outMainHTML = PathUtils.get_page_path(page_path,true);
         res.render(outMainHTML, data, callback);
     } else {
 
+        var baseDir = PathUtils.get_dir_path(page_path,false);
         var configObj = config.getConfig();
         var serverROOT = configObj.serverROOT;
         var staticROOT = configObj.staticROOT;
@@ -75,7 +77,7 @@ function renderPageIncludeByConfig(req, res, data, jsonConfig ,baseDir,callback)
         data['_includeStyle_'] = includeStyle;
         data['_includeScript_'] = includeScript;
 
-        var sourceMainHTML = path.join(baseDir, config_main);
+        var sourceMainHTML = PathUtils.get_page_path(page_path,false);
         res.render(sourceMainHTML, data ,callback);
     }
 
@@ -93,7 +95,7 @@ function renderPageInclude(req, res, data, jsonPath ,callback) {
         }
         var jsonConfig = JSON.parse(jsonStr);
         var baseDir = path.dirname(jsonPath);
-        renderPageIncludeByConfig(req, res, data, jsonConfig ,baseDir,callback);
+        renderPageIncludeByConfig(req, res, data, jsonConfig ,baseDir,false,callback);
     });
 }
 

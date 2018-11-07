@@ -80,16 +80,27 @@ module.exports = {
     },
 
 
-    render: function (req, res, dir_path, data, callback) {
+    render: function (req, res, page_path, data, callback) {
+
+        var is_page_path = false;
+        var dir_path = "";
+        var xxx = path.extname(page_path);
+        if(xxx === '.html'){
+            is_page_path = true;
+        }else {
+            dir_path = page_path;
+        }
+
+
 
         data = Object.assign({}, data || {});
 
         if (DevUtils.isProduction(req)) {
-            var outMainHTML = path.join(dir_path, './_dist/index.html');
+            var outMainHTML = is_page_path ? page_path : path.join(dir_path, './_dist/index.html');
             res.render(outMainHTML, data, callback);
         } else {
             var jsonConfig = FileUtils.createJsonConfig(dir_path);
-            return html2jsServer.renderPageIncludeByConfig(req, res, data, jsonConfig, dir_path, callback);
+            return html2jsServer.renderPageIncludeByConfig(req, res, data, jsonConfig, page_path, is_page_path, callback);
         }
 
     }

@@ -180,11 +180,31 @@ function minifyByJSONConfig(baseDir, jsonConfig, buildConfig) {
     }
 
 
-    var mainHtml = getMainHtmlContent(baseDir, config_main, script, style, is_minify_html);
-    if (mainHtml) {
-        var mainHtmlName = config_name + ".html";
-        outFile(mainHtml, mainHtmlName, baseDir, config_out);
+
+    if(Array.isArray(config_main)){
+
+        for (var i = 0; i < config_main.length; i++) {
+            var config_main_i = config_main[i];
+            var mainHtml_i = getMainHtmlContent(baseDir, config_main_i, script, style, is_minify_html);
+            if (mainHtml_i) {
+                var config_main_i_parse = path.parse(config_main_i);
+                var mainHtmlName_i = config_main_i_parse['name'] + ".html";
+                outFile(mainHtml_i, mainHtmlName_i, baseDir, config_out);
+            }
+        }
+
+    }else {
+
+        var mainHtml = getMainHtmlContent(baseDir, config_main, script, style, is_minify_html);
+        if (mainHtml) {
+            var mainHtmlName = config_name + ".html";
+            outFile(mainHtml, mainHtmlName, baseDir, config_out);
+        }
+
     }
+
+
+
 }
 
 

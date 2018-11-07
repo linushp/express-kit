@@ -128,12 +128,14 @@ function createJsonConfigByFileList(dir_path,fileList) {
     });
 
 
+    var result_name = path.parse(dir_path)['name']||'index';
+
     var result = {
         "html": [],
         "js": [],
         "css": [],
-        "name": "index",
-        "main": "./index.html"
+        "name": result_name,
+        "main": []
     };
 
     for (var i = 0; i < fileListRemoveBase.length; i++) {
@@ -145,6 +147,8 @@ function createJsonConfigByFileList(dir_path,fileList) {
             result.js.push(fileName);
         }else if(extname === '.shtml'){
             result.html.push(fileName);
+        }else if(extname === '.html'){
+            result.main.push(fileName);
         }
     }
 
