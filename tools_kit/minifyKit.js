@@ -142,7 +142,7 @@ function minifyByJSONConfig(baseDir, jsonConfig, buildConfig) {
     var is_minify_html = buildConfig.is_minify_html;
     var prod_htmlSrc = buildConfig.prod_htmlSrc || "";
     var prod_fileName = buildConfig.prod_fileName || function (x) {
-        return "min" + x;
+        return "min/" + x;
     };
 
 
