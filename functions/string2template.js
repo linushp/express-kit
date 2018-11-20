@@ -1,5 +1,3 @@
-
-
 function propStringToMap(ss1) {
     var propsMap = {};
     var propsLength = 0;
@@ -32,7 +30,7 @@ function propStringToMap(ss1) {
 }
 
 
-function parseString2Html(html) {
+function parseString2Html(html, file_name) {
 
     var templateArray = html.split('<string2-template');
 
@@ -58,18 +56,36 @@ function parseString2Html(html) {
 
             var templateKey = propsMap['id'] || propsMap[firstProp];
 
-            if (propsLength === 1) {
-                resultObject[templateKey] = templateContent;
-            }
 
-            else if (propsLength > 1) {
+            var foo_name = propsMap['foo'] || "";
+            if (foo_name && foo_name.length > 0) {
+
+                templateKey = file_name + "----" + foo_name;
                 resultObject[templateKey] = {
                     content: templateContent,
                     propsMap: propsMap,
                     propsLength: propsLength,
-                    firstProp: firstProp
+                    firstProp: firstProp,
+                    file_name: file_name,
+                    foo_name: foo_name
                 };
+
             }
+
+            else if (propsLength > 1) {
+
+                resultObject[templateKey] = {
+                    content: templateContent,
+                    propsMap: propsMap,
+                    propsLength: propsLength,
+                    firstProp: firstProp,
+                    file_name: file_name,
+                    foo_name: foo_name
+                };
+            } else {
+                resultObject[templateKey] = templateContent;
+            }
+
         }
     }
 
@@ -89,8 +105,7 @@ function extendObject(a, b) {
 }
 
 
-
 module.exports = {
-    extendObject:extendObject,
-    parseString2Html:parseString2Html
+    extendObject: extendObject,
+    parseString2Html: parseString2Html
 };

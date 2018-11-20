@@ -23,6 +23,8 @@ function htmlArray2js(dirPath, htmlPathArray) {
                             return;
                         }
 
+                        var filePathParsed = path.parse(filePath);
+                        var fileName = filePathParsed.name; //没有后缀的文件名
                         fs.readFile(filePath, "utf-8", function (err, html) {
                             if (err) {
                                 var errorMsg = {};
@@ -30,7 +32,7 @@ function htmlArray2js(dirPath, htmlPathArray) {
                                 result = string2template.extendObject(result, errorMsg);
                                 resolve(result);
                             } else {
-                                var htmlObject = string2template.parseString2Html(html);
+                                var htmlObject = string2template.parseString2Html(html,fileName);
                                 result = string2template.extendObject(result, htmlObject);
                                 resolve(result);
                             }

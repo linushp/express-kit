@@ -1,6 +1,6 @@
 {
   "name": "express-kit",
-  "version": "1.0.35",
+  "version": "1.0.36",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/luanhaipeng/express-kit.git"
+    "url": "git+https://github.com/linushp/express-kit.git"
   },
   "author": "910010653@qq.com",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/luanhaipeng/express-kit/issues"
+    "url": "https://github.com/linushp/express-kit/issues"
   },
-  "homepage": "https://github.com/luanhaipeng/express-kit#readme",
+  "homepage": "https://github.com/linushp/express-kit#readme",
   "dependencies": {
     "uglify-js": "^3.1.3"
   }
