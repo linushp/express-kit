@@ -8,6 +8,7 @@ var html2jsServer = require('./server_utils/html2jsServer');
 var languageParser = require('./server_utils/languageParser');
 var FileCacheReader = require('./server_utils/FileCacheReader');
 var string2templateUtils = require('./server_utils/string2templateUtils');
+var javaScriptCodeStringUtils = require('./server_utils/javaScriptCodeStringUtils');
 var config = require('./functions/config');
 var FileUtils = require('./functions/FileUtils');
 var PathUtils = require('./functions/PathUtils');
@@ -45,6 +46,15 @@ module.exports = {
             return string2templateUtils.htmlArray2js(base_folder, htmlPathArray);
         });
     },
+
+    getJavaScriptContentAsync: function (base_folder) {
+        var jsonConfigPromise = FileUtils.createJsonConfigAsync(base_folder);
+        return jsonConfigPromise.then(function (configObj) {
+            var jsPathArray = configObj.js || [];
+            return javaScriptCodeStringUtils.toCodeString(base_folder, jsPathArray);
+        });
+    },
+
 
     html2jsRender: function (req, res, data, jsonPath, callback) {
         return html2jsServer.renderPageInclude(req, res, data, jsonPath, callback);
@@ -86,10 +96,10 @@ module.exports = {
         data = Object.assign({}, data || {});
 
         if (DevUtils.isProduction(req)) {
-            var outMainHTML = PathUtils.get_page_path(page_path,true);
+            var outMainHTML = PathUtils.get_page_path(page_path, true);
             res.render(outMainHTML, data, callback);
         } else {
-            var dir_path = PathUtils.get_dir_path(page_path,false);
+            var dir_path = PathUtils.get_dir_path(page_path, false);
             var jsonConfig = FileUtils.createJsonConfig(dir_path);
             return html2jsServer.renderPageIncludeByConfig(req, res, data, jsonConfig, page_path, callback);
         }
