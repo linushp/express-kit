@@ -5,11 +5,13 @@ var path = require('path');
 var fs = require('fs');
 
 
+var start_up_time = new Date().getTime();
+
 function toScriptArray(jsArray0, baseDir, serverROOT, type, staticROOT) {
     jsArray0 = jsArray0 || [];
     var scriptArray = [];
 
-    var version = new Date().getTime();
+    var version = start_up_time; //new Date().getTime();
 
     for (var i = 0; i < jsArray0.length; i++) {
         var js = jsArray0[i];

@@ -15,7 +15,9 @@ function htmlArray2js(dirPath, htmlPathArray) {
             result = string2template.extendObject(result, errorMsg);
         } else {
             var html = fs.readFileSync(filePath, "utf-8");
-            var htmlObject = string2template.parseString2Html(html);
+            var filePathParsed = path.parse(filePath);
+            var fileName = filePathParsed.name; //没有后缀的文件名
+            var htmlObject = string2template.parseString2Html(html,fileName);
             result = string2template.extendObject(result, htmlObject);
         }
     }
