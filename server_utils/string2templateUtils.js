@@ -8,6 +8,12 @@ function htmlArray2js(dirPath, htmlPathArray) {
 
     for (var i = 0; i < htmlPathArray.length; i++) {
         var htmlPath = (htmlPathArray[i] || '').trim();
+
+        if(htmlPath[0] === '\\' || htmlPath[0] === '/'){
+            htmlPath = htmlPath.substring(1);
+        }
+
+
         if (htmlPath) {
             p = p.then((function (dirPath, htmlPath) {
                 return function (result) {
@@ -15,13 +21,7 @@ function htmlArray2js(dirPath, htmlPathArray) {
                     return new Promise(function (resolve, reject) {
                         var filePath = path.resolve(dirPath, htmlPath);
 
-                        if (filePath.indexOf(dirPath) !== 0) {
-                            var errorMsg = {};
-                            errorMsg["read_file_error_" + htmlPath] = "illegal access";
-                            result = string2template.extendObject(result, errorMsg);
-                            resolve(result);
-                            return;
-                        }
+
 
                         var filePathParsed = path.parse(filePath);
                         var fileName = filePathParsed.name; //没有后缀的文件名

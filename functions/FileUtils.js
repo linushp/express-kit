@@ -122,19 +122,6 @@ function createJsonConfigByFileList(dir_path,fileList) {
 
     var fileOrder = ['framework','common','func','util','api','store','action','comp','view','page','src'];
     var lastOrder = ['main','index'];
-   /* var fileListRemoveBase = fileList.map(function(filePath){
-        return filePath.replace(dir_path +  path.sep ,'');
-    });
-
-    fileListRemoveBase = fileListRemoveBase.sort(function(a,b){
-        var weight_a = createJsonConfig_getWeight(fileOrder,lastOrder,a);
-        var weight_b = createJsonConfig_getWeight(fileOrder,lastOrder,b);
-        if(weight_a === weight_b){
-            return a.localeCompare(b);
-        }
-        return weight_a - weight_b;
-    });
-    */
 
    var fileListRemoveBase = fileList;
 
@@ -197,8 +184,46 @@ function mergeJsonConfig(jsonConfig1,jsonConfig2) {
         "html": html1.concat(html2),
         "js": js1.concat(js2),
         "css": css1.concat(css2),
-        "name": name1 || name2,
+        "name": name2 || name1,
         "main": main1.concat(main2)
+    }
+}
+
+
+
+function sortListByChar(arr) {
+    return arr.sort(function (a,b) {
+        var path_a = path.parse(a);
+        var path_b = path.parse(b);
+
+        if(path_a.name === 'index'){
+            return 1;
+        }
+
+        if(path_b.name === 'index'){
+            return -1;
+        }
+
+        var x =  a.localeCompare(b);
+        return x;
+    })
+}
+
+function sortJsonConfigObj(jsonConfig1) {
+    jsonConfig1 = jsonConfig1 || {};
+
+    var name1 = jsonConfig1.name;
+    var html1 = sortListByChar(jsonConfig1['html'] || []);
+    var js1 = sortListByChar(jsonConfig1['js'] || []);
+    var css1 = sortListByChar(jsonConfig1['css'] || []);
+    var main1 = sortListByChar(jsonConfig1['main'] || []);
+
+    return {
+        "html": html1,
+        "js": js1,
+        "css": css1,
+        "name": name1,
+        "main": main1
     }
 }
 
@@ -216,6 +241,9 @@ function createJsonConfig(dir_path0,include_commons_dir_list){
         jsonConfigObjResult = mergeJsonConfig(jsonConfigObjResult,jsonConfigObj);
     }
 
+
+    jsonConfigObjResult = sortJsonConfigObj(jsonConfigObjResult);
+    
     return jsonConfigObjResult;
 }
 

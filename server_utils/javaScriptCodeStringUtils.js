@@ -15,12 +15,6 @@ function toCodeString(dirPath, htmlPathArray) {
                     return new Promise(function (resolve, reject) {
                         var filePath = path.resolve(dirPath, htmlPath);
 
-                        if (filePath.indexOf(dirPath) !== 0) {
-                            result.push("function toCodeString_read_file_error_"+i+"(){console.log('illegal access:"+filePath+"')}");
-                            resolve(result);
-                            return;
-                        }
-
                         fs.readFile(filePath, "utf-8", function (err, code) {
                             if (err) {
                                 console.log(err);
