@@ -96,7 +96,7 @@ module.exports = {
 
 
     render: function (req, res, page_path, data, tempConfig, callback) {
-
+        tempConfig = tempConfig || {};
         data = Object.assign({}, data || {});
 
         if (DevUtils.isProduction(req)) {
