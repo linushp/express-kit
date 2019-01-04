@@ -122,7 +122,7 @@ function createJsonConfigByFileList(dir_path,fileList) {
 
     var fileOrder = ['framework','common','func','util','api','store','action','comp','view','page','src'];
     var lastOrder = ['main','index'];
-    var fileListRemoveBase = fileList.map(function(filePath){
+   /* var fileListRemoveBase = fileList.map(function(filePath){
         return filePath.replace(dir_path +  path.sep ,'');
     });
 
@@ -134,6 +134,9 @@ function createJsonConfigByFileList(dir_path,fileList) {
         }
         return weight_a - weight_b;
     });
+    */
+
+   var fileListRemoveBase = fileList;
 
 
     var result_name = path.parse(dir_path)['name']||'index';
@@ -172,9 +175,48 @@ function createJsonConfigAsync(dir_path) {
 }
 
 
-function createJsonConfig(dir_path){
-    var fileList = getFolderFiles(dir_path,[]);
-    return createJsonConfigByFileList(dir_path,fileList);
+function mergeJsonConfig(jsonConfig1,jsonConfig2) {
+
+    jsonConfig1 = jsonConfig1 || {};
+    jsonConfig2 = jsonConfig2 || {};
+
+    var html1 = jsonConfig1['html'] || [];
+    var js1 = jsonConfig1['js'] || [];
+    var css1 = jsonConfig1['css'] || [];
+    var name1 = jsonConfig1.name;
+    var main1 = jsonConfig1['main'] || [];
+
+    var html2 = jsonConfig2['html'] || [];
+    var js2 = jsonConfig2['js'] || [];
+    var css2 = jsonConfig2['css'] || [];
+    var name2 = jsonConfig2.name;
+    var main2 = jsonConfig2['main'] || [];
+
+
+    return {
+        "html": html1.concat(html2),
+        "js": js1.concat(js2),
+        "css": css1.concat(css2),
+        "name": name1 || name2,
+        "main": main1.concat(main2)
+    }
+}
+
+function createJsonConfig(dir_path0,include_commons_dir_list){
+
+    var dir_path_list = [].concat(include_commons_dir_list);
+    dir_path_list.push(dir_path0);
+
+    var jsonConfigObjResult = {};
+
+    for (var i = 0; i < dir_path_list.length; i++) {
+        var dir_path = dir_path_list[i];
+        var fileList = getFolderFiles(dir_path,[]);
+        var jsonConfigObj =  createJsonConfigByFileList(dir_path,fileList);
+        jsonConfigObjResult = mergeJsonConfig(jsonConfigObjResult,jsonConfigObj);
+    }
+
+    return jsonConfigObjResult;
 }
 
 

@@ -4,22 +4,26 @@ var string2template = require('../functions/string2template');
 
 
 function htmlArray2js(dirPath, htmlPathArray) {
+
     var result = {};
     for (var i = 0; i < htmlPathArray.length; i++) {
         var htmlPath = htmlPathArray[i];
-        var filePath = path.resolve(dirPath, htmlPath);
+        var filePath = htmlPath;
+        if (dirPath) {
+            filePath = path.resolve(dirPath, htmlPath);
+        }
 
-        if (filePath.indexOf(dirPath) !== 0) {
-            var errorMsg = {};
-            errorMsg["read_file_error_" + htmlPath] = "illegal access";
-            result = string2template.extendObject(result, errorMsg);
-        } else {
-            var html = fs.readFileSync(filePath, "utf-8");
-            var filePathParsed = path.parse(filePath);
+        var html = fs.readFileSync(filePath, "utf-8");
+        var filePathParsed = path.parse(filePath);
+        if(filePathParsed['ext'] !== '.shtml' && filePathParsed['ext'] !== '.html'){
+            console.log('[ERROR] only shtml file can to js ', filePath);
+        }else {
             var fileName = filePathParsed.name; //没有后缀的文件名
-            var htmlObject = string2template.parseString2Html(html,fileName);
+            var htmlObject = string2template.parseString2Html(html, fileName);
             result = string2template.extendObject(result, htmlObject);
         }
+
+
     }
     return result;
 }

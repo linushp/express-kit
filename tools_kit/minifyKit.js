@@ -30,7 +30,14 @@ function minifyJavaScript(baseDir, jsArray) {
     var jsContentArray = [];
     for (var i = 0; i < jsArray.length; i++) {
         var jsName = jsArray[i];
-        var jsPath = path.join(baseDir, jsName);
+
+
+        var jsPath = jsName;
+        if(baseDir && baseDir.length > 0 ){
+            jsPath = path.join(baseDir, jsName);
+        }
+
+
         var jsContent = fs.readFileSync(jsPath, 'utf-8');
         var jsContent1 = UglifyJS.minify(jsContent);
         if (jsContent1.error) {
@@ -66,7 +73,12 @@ function toStaticPath(jsName, outDir,prod_htmlSrc) {
 
 
 function getMainHtmlContent(baseDir, config_main, script, style, is_minify_html) {
-    var htmlPath = path.join(baseDir, config_main);
+
+    var htmlPath = config_main;
+    if(baseDir && baseDir.length > 0){
+        htmlPath = path.join(baseDir, config_main);
+    }
+
 
     if(!fs.existsSync(htmlPath)){
         return null;
@@ -145,9 +157,10 @@ function minifyByJSONConfig(baseDir, jsonConfig, buildConfig) {
         return "min/" + x;
     };
 
+    var dist_dir = path.join(baseDir, config_out);
 
     //1.删除之前的目录
-    deleteFolder(path.join(baseDir, config_out));
+    deleteFolder(dist_dir);
 
     var buildTime = (new Date().getTime()-1541583183867).toString(32).split("").reverse().join("");
 
@@ -156,7 +169,7 @@ function minifyByJSONConfig(baseDir, jsonConfig, buildConfig) {
     //2.编译HTML文件
     var htmlString = html2js.getHtml2JsContent(baseDir, config_html, configObj.html2js_tpl_name);
     //3.编译JS文件
-    var jsCode = minifyJavaScript(baseDir, config_js);
+    var jsCode = minifyJavaScript('', config_js);
     jsCode = htmlString + "\n" + jsCode;
     var jsName = prod_fileName(config_name + "." + buildTime + ".min.js");
 
@@ -167,7 +180,7 @@ function minifyByJSONConfig(baseDir, jsonConfig, buildConfig) {
 
 
     //4.编译CSS文件
-    var cssCode = minifyCssCode(baseDir, config_css);
+    var cssCode = minifyCssCode('', config_css);
     var cssName = prod_fileName(config_name + "." + buildTime + ".min.css");
 
     if (!is_inline_style) {
@@ -198,7 +211,7 @@ function minifyByJSONConfig(baseDir, jsonConfig, buildConfig) {
 
         for (var i = 0; i < config_main.length; i++) {
             var config_main_i = config_main[i];
-            var mainHtml_i = getMainHtmlContent(baseDir, config_main_i, script, style, is_minify_html);
+            var mainHtml_i = getMainHtmlContent('', config_main_i, script, style, is_minify_html);
             if (mainHtml_i) {
                 var config_main_i_parse = path.parse(config_main_i);
                 var mainHtmlName_i = config_main_i_parse['name'] + ".html";

@@ -7,7 +7,7 @@ var fs = require('fs');
 
 var start_up_time = new Date().getTime();
 
-function toScriptArray(jsArray0, baseDir, serverROOT, type, staticROOT) {
+function toScriptArray(jsArray0, serverROOT, type, staticROOT) {
     jsArray0 = jsArray0 || [];
     var scriptArray = [];
 
@@ -16,7 +16,7 @@ function toScriptArray(jsArray0, baseDir, serverROOT, type, staticROOT) {
     for (var i = 0; i < jsArray0.length; i++) {
         var js = jsArray0[i];
         var srcPath = '';
-        var srcPath0 = path.join(baseDir, js);
+        var srcPath0 = js;
 
         if (type ==='js') {
             srcPath = srcPath0.replace(serverROOT, '');
@@ -63,9 +63,9 @@ function renderPageIncludeByConfig(req, res, data, jsonConfig ,page_path,callbac
         var serverROOT = configObj.serverROOT;
         var staticROOT = configObj.staticROOT;
 
-        var scriptArray = toScriptArray(config_js, baseDir, serverROOT, 'js', staticROOT);
-        var styleArray = toScriptArray(config_css, baseDir, serverROOT, 'css', staticROOT);
-        var htmlArray = toScriptArray(config_html, baseDir, serverROOT, 'html', staticROOT);
+        var scriptArray = toScriptArray(config_js,  serverROOT, 'js', staticROOT);
+        var styleArray = toScriptArray(config_css, serverROOT, 'css', staticROOT);
+        var htmlArray = toScriptArray(config_html, serverROOT, 'html', staticROOT);
 
 
         if(htmlArray.length > 0){

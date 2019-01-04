@@ -79,19 +79,23 @@ module.exports = {
 
     /**
      * @param dir_path
-     * @param buildConfig {inline_script:boolean,inline_style:boolean,is_minify_html:boolean,prod_prefix:string}
+     * @param buildConfig {inline_script:boolean,inline_style:boolean,is_minify_html:boolean,prod_prefix:string,include_commons:[]}
      */
     build: function (dir_path, buildConfig) {
+        buildConfig = buildConfig || {};
+
         var time1 = new Date().getTime();
-        var sss = FileUtils.createJsonConfig(dir_path);
+        var include_commons = buildConfig['include_commons'] || [];
+        var sss = FileUtils.createJsonConfig(dir_path,include_commons);
+        console.log(sss)
         var time2 = new Date().getTime();
         console.log(JSON.stringify(sss));
-        minifyKit.minifyByJSONConfig(dir_path, sss, buildConfig || {});
+        minifyKit.minifyByJSONConfig(dir_path, sss, buildConfig);
         console.info("\nBuild Successfully , Cost time :" + (time2 - time1));
     },
 
 
-    render: function (req, res, page_path, data, callback) {
+    render: function (req, res, page_path, data, tempConfig, callback) {
 
         data = Object.assign({}, data || {});
 
@@ -100,7 +104,8 @@ module.exports = {
             res.render(outMainHTML, data, callback);
         } else {
             var dir_path = PathUtils.get_dir_path(page_path, false);
-            var jsonConfig = FileUtils.createJsonConfig(dir_path);
+            var include_commons_dir_list = tempConfig['include_commons'] || [] ;
+            var jsonConfig = FileUtils.createJsonConfig(dir_path,include_commons_dir_list);
             return html2jsServer.renderPageIncludeByConfig(req, res, data, jsonConfig, page_path, callback);
         }
 
