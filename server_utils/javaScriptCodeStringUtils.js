@@ -21,6 +21,9 @@ function toCodeString(dirPath, htmlPathArray) {
                         if(!dirPath){
                             filePath = htmlPath;
                         }else {
+                            if(htmlPath[0] === '\\' || htmlPath[0] === '/'){
+                                htmlPath = htmlPath.substring(1);
+                            }
                             filePath = path.resolve(dirPath, htmlPath);
                         }
 
