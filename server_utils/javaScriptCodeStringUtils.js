@@ -2,7 +2,11 @@ var fs = require("fs");
 var path = require("path");
 
 
-
+/**
+ *
+ * @param dirPath 可为空
+ * @param htmlPathArray
+ */
 function toCodeString(dirPath, htmlPathArray) {
     var p = Promise.resolve();
 
@@ -13,7 +17,13 @@ function toCodeString(dirPath, htmlPathArray) {
                 return function (result) {
                     result = result || [];
                     return new Promise(function (resolve, reject) {
-                        var filePath = path.resolve(dirPath, htmlPath);
+                        var filePath;
+                        if(!dirPath){
+                            filePath = htmlPath;
+                        }else {
+                            filePath = path.resolve(dirPath, htmlPath);
+                        }
+
 
                         fs.readFile(filePath, "utf-8", function (err, code) {
                             if (err) {

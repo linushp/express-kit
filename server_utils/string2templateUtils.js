@@ -3,6 +3,11 @@ var path = require("path");
 var string2template = require('../functions/string2template');
 
 
+/**
+ *
+ * @param dirPath 可为空
+ * @param htmlPathArray
+ */
 function htmlArray2js(dirPath, htmlPathArray) {
     var p = Promise.resolve();
 
@@ -19,8 +24,12 @@ function htmlArray2js(dirPath, htmlPathArray) {
                 return function (result) {
                     result = result || {};
                     return new Promise(function (resolve, reject) {
-                        var filePath = path.resolve(dirPath, htmlPath);
-
+                        var filePath;
+                        if(!dirPath){
+                            filePath = htmlPath;
+                        }else {
+                            filePath = path.resolve(dirPath, htmlPath);
+                        }
 
 
                         var filePathParsed = path.parse(filePath);

@@ -43,7 +43,7 @@ module.exports = {
         var jsonConfigPromise = FileUtils.createJsonConfigAsync(base_folder);
         return jsonConfigPromise.then(function (configObj) {
             var htmlPathArray = configObj.html || [];
-            return string2templateUtils.htmlArray2js(base_folder, htmlPathArray);
+            return string2templateUtils.htmlArray2js(null, htmlPathArray);
         });
     },
 
@@ -51,7 +51,7 @@ module.exports = {
         var jsonConfigPromise = FileUtils.createJsonConfigAsync(base_folder);
         return jsonConfigPromise.then(function (configObj) {
             var jsPathArray = configObj.js || [];
-            return javaScriptCodeStringUtils.toCodeString(base_folder, jsPathArray);
+            return javaScriptCodeStringUtils.toCodeString(null, jsPathArray);
         });
     },
 
